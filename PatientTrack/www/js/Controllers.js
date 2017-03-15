@@ -2,7 +2,7 @@ angular.module('starter.controllers', ['ionic'])
 
     .controller('LoginCtrl', function ($scope, $http, $rootScope, $window) {
         $scope.getDetails = function () {
-            $http.get('http://patienttrackapiv2.azurewebsites.net/api/Carers/' + this.loginEmail + '/' + this.loginPwd)
+            $http.get('http://patienttrackapiv2.azurewebsites.net/api/Patients/' + this.loginEmail + '/' + this.loginPwd)
                 .success(function (data, status, headers, config) {
                     console.log('data success');
                     console.log(data); // for browser console
