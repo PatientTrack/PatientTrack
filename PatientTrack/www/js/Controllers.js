@@ -17,12 +17,16 @@ angular.module('starter.controllers', ['ionic'])
 
     .controller('RegisterCtrl', function ($scope, $http, $window) {
         $scope.registerCarer = function () {
+            var patientCode = '123456'; // Generate code
             var data =
                 {
-                    "Patients": [],
-                    "CarerFName": this.regUsername,
-                    "CarerEmail": this.regEmail,
-                    "CarerPwd": this.regPwd
+                    "Locations": [],
+                    "Carers": [],
+                    "PatientFName": this.regUsername,
+                    "PatientEmail": this.regEmail,
+                    "PatientPwd": this.regPwd,
+                    "PatientPostcode": this.regPostcode,
+                    "PatientCode": patientCode
                 };
             $http.post('http://patienttrackapiv2.azurewebsites.net/api/Carers/', data)
                 .success(function (data, status, headers, config) {

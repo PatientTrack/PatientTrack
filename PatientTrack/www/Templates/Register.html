@@ -1,11 +1,12 @@
 <ion-view>
     <div class="bar bar-header bar-calm">
         <img src="img/Logo_square.png" height="100%">
-        <h1 class="title">PatientTrack for Carers</h1>
+        <h1 class="title">PatientTrack</h1>
     </div>
     <ion-content class="has-header">
         <div class="centre pad-top">
-            <h1>Welcome to PatientTrack for Carers</h1>
+            <h1>Welcome to <br/>
+                PatientTrack</h1>
             <h4>Please register or log in</h4>
             <br/>
         </div>
@@ -22,7 +23,11 @@
                 <span class="input-label">Password</span>
                 <input type="password" placeholder="Password" ng-model="regPwd">
             </label>
+            <label class="item item-input item-floating-label">
+                <span class="input-label">Postcode</span>
+                <input type="text" placeholder="Postcode" ng-model="regPostcode">
+            </label>
         </div>
-        <a class="button button-balanced button-block" ng-click="registerCarer()">Register</a>
+        <a class="button button-balanced button-block" ng-click="registerPatient()">Register</a>
     </ion-content>
 </ion-view>
