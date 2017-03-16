@@ -35,38 +35,6 @@ angular.module('starter.controllers', ['ionic'])
         };
     })
 
-    .controller('ViewPatientsCtrl', function ($scope, $http, $rootScope, $window) {
-        $scope.viewPatient = function (index) {
-            $window.location.href = '#/PatientDetails'
-            angular.element(document).ready(function () {
-                $rootScope.selectedPatient = $rootScope.carers.Patients[index];
-                var lat = $rootScope.carers.Patients[index].Locations[$rootScope.carers.Patients[index].Locations.length - 1].Latitude;
-                var long = $rootScope.carers.Patients[index].Locations[$rootScope.carers.Patients[index].Locations.length - 1].Longitude;
-                console.log("Lat is " + lat + ", Long is " + long);
-                var latLng = new google.maps.LatLng(lat, long);
-                var mapOptions = {
-                    center: latLng,
-                    zoom: 15,
-                    mapTypeId: google.maps.MapTypeId.ROADMAP
-                };
-                $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
-
-                // Wait until the map is loaded
-                google.maps.event.addListenerOnce($scope.map, 'idle', function () {
-
-                    var marker = new google.maps.Marker({
-                        map: $scope.map,
-                        animation: google.maps.Animation.DROP,
-                        position: latLng
-                    });
-                });
-            });
-        }
-    })
-
-    .controller('PatientDetailsCtrl', function ($scope) {
-    })
-
     .controller('SettingsCtrl', function ($scope, $rootScope, $http) {
         $scope.updateUsername = function () {
             var data =
@@ -121,6 +89,10 @@ angular.module('starter.controllers', ['ionic'])
                 $scope.showOldPwdError();
             }
         };
+    })
+
+    .controller('HomeCtrl', function ($scope, $rootScope, $http) {
+
     })
 
     .controller('PopupCtrl', function ($scope, $ionicPopup, $timeout, $rootScope, $http, $window) {
