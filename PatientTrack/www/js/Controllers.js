@@ -1,8 +1,38 @@
 angular.module('starter.controllers', ['ionic'])
 
-    .controller('LoginCtrl', function ($scope, $http, $rootScope, $window) {
+    .controller('LoginCtrl', function ($scope, $http, $rootScope, $window, $cordovaPreferences) {
         $scope.getDetails = function () {
             $http.get('http://patienttrackapiv2.azurewebsites.net/api/Patients/' + this.loginEmail + '/' + this.loginPwd)
+                .success(function (data, status, headers, config) {
+                    console.log('data success');
+                    console.log(data); // for browser console
+                    $rootScope.patient = data; // for UI
+                    $window.location.href = '#/Home';
+
+                    // Storing login details in preferences
+                    // $cordovaPreferences.store('patientTrackEmail', this.loginEmail)
+                    //     .success(function(value) {
+                    //         console.log("Success storing email: " + value);
+                    //     })
+                    //     .error(function(error) {
+                    //         console.log("Error: " + error.details);
+                    //     })
+                    // $cordovaPreferences.store('patientTrackPwd', this.loginPwd)
+                    //     .success(function(value) {
+                    //         console.log("Success storing pwd: " + value);
+                    //     })
+                    //     .error(function(error) {
+                    //         console.log("Error: " + error.details);
+                    //     })
+                })
+                .error(function (data, status, headers, config) {
+                    $scope.showLoginFail();
+                });
+        };
+
+        $scope.loginFromPreferences = function (email, pwd) {
+            console.log('Logging in from Cordova preferences');
+            $http.get('http://patienttrackapiv2.azurewebsites.net/api/Patients/' + email + '/' + pwd)
                 .success(function (data, status, headers, config) {
                     console.log('data success');
                     console.log(data); // for browser console
@@ -150,21 +180,49 @@ angular.module('starter.controllers', ['ionic'])
     .controller('HomeCtrl', function ($scope, $rootScope, $cordovaGeolocation, $window) {
         $scope.navigateHome = function () {
             var options = {timeout: 10000, enableHighAccuracy: true};
-            $cordovaGeolocation.getCurrentPosition(options).then(function(position){
+            $cordovaGeolocation.getCurrentPosition(options).then(function (position) {
                 console.log("Found location, using launchnavigator to navigate");
                 launchnavigator.navigate($rootScope.patient.PatientPostcode, {
                     start: position.coords.latitude + "," + position.coords.longitude
                 });
-                // cordova.InAppBrowser.open('https://www.google.co.uk/maps/dir/' + position.coords.latitude + ',' + position.coords.longitude
-                //     + '/' + $rootScope.patient.PatientPostcode, '_blank', 'location=yes');
-            }, function(error){
+            }, function (error) {
                 console.log("Could not get location");
                 console.log(error);
             });
         };
     })
 
-    .controller('PopupCtrl', function ($scope, $ionicPopup, $timeout, $rootScope, $http, $window) {
+    .controller('PopupCtrl', function ($scope, $ionicPopup, $timeout, $rootScope, $http, $window, $interval, $cordovaGeolocation) {
+
+        // Function to upload patients location to db every 30000ms
+        $interval(function () {
+            $scope.uploadLocation();
+        }, 30000);
+        $scope.uploadLocation = function () {
+            var options = {timeout: 10000, enableHighAccuracy: true};
+            $cordovaGeolocation.getCurrentPosition(options).then(function (position) {
+                console.log("Found location, pushing to DB");
+                // POST request body
+                var data =
+                    {
+                        "Latitude": position.coords.latitude,
+                        "Longitude": position.coords.longitude
+                    };
+
+                $http.post('http://patienttrackapiv2.azurewebsites.net/api/Patients/AddLocation/' + $rootScope.patient.PatientID, data)
+                    .success(function () {
+                        console.log('Updated location');
+                    })
+                    .error(function (error) {
+                        console.log('Error updating location');
+                        console.log("Error: " + error);
+                    });
+
+            }, function (error) {
+                console.log("Could not get interval location");
+                console.log(error);
+            });
+        };
 
 // A confirm dialog for deleting a patient
         $scope.showConfirmDeleteAccount = function () {

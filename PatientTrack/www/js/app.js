@@ -7,8 +7,7 @@
 angular.module('starter', ['ionic', 'starter.controllers', 'ngCordova'])
 
 
-
-    .run(function ($ionicPlatform) {
+    .run(function ($ionicPlatform, $cordovaPreferences) {
         $ionicPlatform.ready(function () {
             // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
             // for form inputs)
@@ -20,6 +19,36 @@ angular.module('starter', ['ionic', 'starter.controllers', 'ngCordova'])
             if (window.StatusBar) {
                 // org.apache.cordova.statusbar required
                 StatusBar.styleDefault();
+            }
+
+            //
+            // function ok (value) {}
+            // function fail (error) {}
+            // var prefs = plugins.appPreferences;
+            // var userEmail = prefs.fetch(ok, fail, 'patientTrackEmail');
+            // var userPwd = prefs.fetch(ok, fail, 'patientTrackPwd');
+            // if (userEmail != undefined && userPwd != undefined) {
+            //     console.log('Found email pwd set: ' + userEmail + ', ' + userPwd);
+            //     loginFromPreferences(userEmail, userPwd);
+            // }
+            var userEmail = undefined;
+            $cordovaPreferences.fetch('patientTrackEmail')
+                .success(function(value) {
+                    userEmail = value;
+                });
+
+            var userPwd = undefined;
+            $cordovaPreferences.fetch('patientTrackPwd')
+                .success(function(value) {
+                    userPwd = value;
+                });
+
+            if (userEmail != undefined && userPwd != undefined) {
+                console.log('Found email pwd set: ' + userEmail + ', ' + userPwd);
+                $scope.loginFromPreferences(userEmail,userPwd);
+            }
+            else {
+                console.log('Could not find username and/or pwd.')
             }
         });
     })
