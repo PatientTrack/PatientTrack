@@ -3,9 +3,18 @@
         <img src="img/Logo_square.png" height="100%">
         <h1 class="title">PatientTrack</h1>
         <a class="button button-icon icon ion-android-close" style="transform: translateY(-5%);"
-           href="#/ViewPatients"></a>
+           href="#/Home"></a>
     </div>
     <ion-content class="has-header">
+        <div class="list">
+            <a class="item item-thumbnail-left">
+                <img src="img/userIcon.png">
+                <h2>{{patient.PatientFName}}</h2>
+                <p>{{patient.PatientPostcode}}</p>
+                <p>{{patient.PatientEmail}}</p>
+                <p>Your code is: <strong>{{patient.PatientCode}}</strong></p>
+            </a>
+        </div>
         <div class="item item-divider">
             Safe Zone
         </div>
@@ -18,6 +27,11 @@
         <div class="item item-divider">
             Danger Zone!
         </div>
+        <label class="item item-input item-floating-label">
+            <span class="input-label">Change Address</span>
+            <input type="text" placeholder="Change Address" ng-model="updatedAddress">
+        </label>
+        <a class="button button-block button-balanced" ng-click="updateAddress()">Save</a>
         <a class="button button-block button-energized" href="#/ChangePassword">Change Password</a>
         <a class="button button-block button-assertive" ng-click="showConfirmDeleteAccount()">Delete Account</a>
         <a class="button button-block button-balanced" href="#/Login">Sign Out</a>
