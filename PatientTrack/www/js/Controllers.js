@@ -49,11 +49,16 @@ angular.module('starter.controllers', ['ionic'])
         $scope.registerPatient = function () {
 
             if (this.regUsername != null && this.regEmail != null && this.regPwd != null && this.regPostcode != null) {
-                // Generate patientcode - not guaranteed to be unique but fine for demonstation purposes
+                // Generate patientcode using the patient's email - not guaranteed to be unique but fine for demonstation purposes
                 var patientCode = '';
-                for (var i = 0; i <= 5; i++) {
-                    var randPos = Math.floor(Math.random() * this.regUsername.length);
-                    patientCode += this.regUsername[randPos];
+                for (var i = 0; i <= 6; i++) {
+                    var randPos = Math.floor(Math.random() * this.regEmail.length);
+                    if (this.regEmail[randPos] != ".") {
+                        patientCode += this.regEmail[randPos];
+                    }
+                    else {
+                        i--;
+                    }
                 }
 
                 // POST request body
