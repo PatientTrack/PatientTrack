@@ -195,21 +195,21 @@ angular.module('starter.controllers', ['ionic'])
     .controller('PopupCtrl', function ($scope, $ionicPopup, $timeout, $rootScope, $http, $window, $interval, $cordovaGeolocation) {
 
         // Function to upload patients location to db every 30000ms
-        $interval(function () {
-            $scope.uploadLocation();
-        }, 30000);
+        // $interval(function () {
+        //     $scope.uploadLocation();
+        // }, 30000);
         $scope.uploadLocation = function () {
             var options = {timeout: 10000, enableHighAccuracy: true};
             $cordovaGeolocation.getCurrentPosition(options).then(function (position) {
-                console.log("Found location, pushing to DB");
+                console.log("Found user at location '" + position.coords.latitude + "," + position.coords.longitude + "', pushing to DB");
                 // POST request body
-                var data =
+                var locationData =
                     {
                         "Latitude": position.coords.latitude,
                         "Longitude": position.coords.longitude
                     };
 
-                $http.post('http://patienttrackapiv2.azurewebsites.net/api/Patients/AddLocation/' + $rootScope.patient.PatientID, data)
+                    $http.post('http://patienttrackapiv2.azurewebsites.net/api/Patients/AddLocation/' + $rootScope.patient.PatientID, locationData)
                     .success(function () {
                         console.log('Updated location');
                     })
