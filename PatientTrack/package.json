@@ -1,7 +1,7 @@
 {
   "name": "patienttrack",
   "version": "1.1.1",
-  "description": "PatientTrack: An Ionic project",
+  "description": "PatientTrack - A simple way to return independence to people with Dementia",
   "dependencies": {
     "gulp": "^3.5.6",
     "gulp-sass": "^2.0.4",

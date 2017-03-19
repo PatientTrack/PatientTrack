@@ -1,6 +1,6 @@
 angular.module('starter.controllers', ['ionic'])
 
-    .controller('LoginCtrl', function ($scope, $http, $rootScope, $window, $cordovaPreferences) {
+    .controller('LoginCtrl', function ($scope, $http, $rootScope, $window) {
         $scope.getDetails = function () {
             $http.get('http://patienttrackapiv2.azurewebsites.net/api/Patients/' + this.loginEmail + '/' + this.loginPwd)
                 .success(function (data, status, headers, config) {
@@ -177,7 +177,7 @@ angular.module('starter.controllers', ['ionic'])
         };
     })
 
-    .controller('HomeCtrl', function ($scope, $rootScope, $cordovaGeolocation, $window) {
+    .controller('HomeCtrl', function ($scope, $rootScope, $cordovaGeolocation) {
         $scope.navigateHome = function () {
             var options = {timeout: 10000, enableHighAccuracy: true};
             $cordovaGeolocation.getCurrentPosition(options).then(function (position) {
@@ -194,10 +194,10 @@ angular.module('starter.controllers', ['ionic'])
 
     .controller('PopupCtrl', function ($scope, $ionicPopup, $timeout, $rootScope, $http, $window, $interval, $cordovaGeolocation) {
 
-        // Function to upload patients location to db every 30000ms
-        // $interval(function () {
-        //     $scope.uploadLocation();
-        // }, 30000);
+        // Function to upload patients location to db every 30000ms (30s)
+        $interval(function () {
+            $scope.uploadLocation();
+        }, 30000);
         $scope.uploadLocation = function () {
             var options = {timeout: 10000, enableHighAccuracy: true};
             $cordovaGeolocation.getCurrentPosition(options).then(function (position) {

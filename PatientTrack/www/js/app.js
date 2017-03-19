@@ -6,8 +6,7 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('starter', ['ionic', 'starter.controllers', 'ngCordova'])
 
-
-    .run(function ($ionicPlatform, $cordovaPreferences) {
+    .run(function ($ionicPlatform) {
         $ionicPlatform.ready(function () {
             // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
             // for form inputs)
@@ -106,7 +105,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'ngCordova'])
                 url: '/Home',
                 templateUrl: 'Templates/Home.html',
                 controller: 'HomeCtrl'
-            })
+            });
 
         // if none of the above states are matched, use this as the fallback
         $urlRouterProvider.otherwise('/tab/Register');
