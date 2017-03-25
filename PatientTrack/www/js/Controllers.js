@@ -128,38 +128,9 @@ angular.module('starter.controllers', ['ionic'])
                     $scope.showChangeNameError();
                 });
         };
-
-        $scope.updateAddress = function () {
-            $ionicLoading.show();
-            // PUT Request body - contains new Address
-            var data =
-                {
-                    "Locations": $rootScope.patient.Locations,
-                    "Carers": $rootScope.patient.Carers,
-                    "PatientID": $rootScope.patient.PatientID,
-                    "PatientFName": $rootScope.patient.PatientFName,
-                    "PatientEmail": $rootScope.patient.PatientEmail,
-                    "PatientPwd": $rootScope.patient.PatientPwd,
-                    "PatientPostcode": this.updatedAddress,
-                    "PatientCode": $rootScope.patient.PatientCode
-                };
-
-            $http.put('http://patienttrackapiv2.azurewebsites.net/api/Patients/' + $rootScope.patient.PatientID, data)
-                .success(function (data) {
-                    $ionicLoading.hide();
-                    console.log('Updated Address successfully');
-                    $rootScope.patient = data;
-                    $scope.showChangeAddressAlert();
-                })
-                .error(function () {
-                    $ionicLoading.hide();
-                    console.log('Error updating Address');
-                    $scope.showChangeAddressError();
-                });
-        };
     })
 
-    .controller('ChangePasswordCtrl', function ($scope, $rootScope, $http, $ionicLoading) {
+    .controller('ChangePasswordCtrl', function ($scope, $rootScope, $http, $ionicLoading, $window) {
         $scope.updatePwd = function () {
             if (this.currentPwd == $rootScope.patient.PatientPwd) {
                 if (this.newPwd1 == this.newPwd2) {
@@ -181,6 +152,7 @@ angular.module('starter.controllers', ['ionic'])
                             $ionicLoading.hide();
                             console.log('Updated password successfully');
                             $rootScope.patient = data;
+                            $window.location.href = '#/Settings';
                             $scope.showPwdChange();
                         })
                         .error(function () {
@@ -314,28 +286,6 @@ angular.module('starter.controllers', ['ionic'])
 
             alertPopup.then(function (res) {
                 console.log('Username not changed');
-            });
-        };
-
-        // An alert dialog for Address change
-        $scope.showChangeAddressAlert = function () {
-            var alertPopup = $ionicPopup.alert({
-                title: 'Address Changed'
-            });
-
-            alertPopup.then(function (res) {
-                console.log('Address changed');
-            });
-        };
-
-// An alert dialog for Address change
-        $scope.showChangeAddressError = function () {
-            var alertPopup = $ionicPopup.alert({
-                title: 'Address could not be changed'
-            });
-
-            alertPopup.then(function (res) {
-                console.log('Address not changed');
             });
         };
 
