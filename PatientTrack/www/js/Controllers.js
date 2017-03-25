@@ -33,7 +33,7 @@ angular.module('starter.controllers', ['ionic'])
                     console.log('data success');
                     console.log(data); // for browser console
                     $rootScope.carers = data; // for UI
-                    $window.location.href = '#/ViewPatients';
+                    $window.location.href = '#/Home';
                 })
                 .error(function (data, status, headers, config) {
                     $ionicLoading.hide();
@@ -72,6 +72,7 @@ angular.module('starter.controllers', ['ionic'])
                     .success(function () {
                         $ionicLoading.hide();
                         console.log('Registered successfully');
+                        $window.location.href = '#/tab/Login';
                         $scope.showRegSuccess();
                     })
                     .error(function () {
