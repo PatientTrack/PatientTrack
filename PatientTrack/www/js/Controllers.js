@@ -2,9 +2,7 @@ angular.module('starter.controllers', ['ionic'])
 
     .controller('LoginCtrl', function ($scope, $http, $rootScope, $window, $ionicLoading) {
         $scope.getDetails = function () {
-            // Setup the loader
             $ionicLoading.show();
-
             $http.get('http://patienttrackapiv2.azurewebsites.net/api/Patients/' + this.loginEmail + '/' + this.loginPwd)
                 .success(function (data, status, headers, config) {
                     $ionicLoading.hide();
@@ -12,39 +10,8 @@ angular.module('starter.controllers', ['ionic'])
                     console.log(data); // for browser console
                     $rootScope.patient = data; // for UI
                     $window.location.href = '#/Home';
-
-                    // Storing login details in preferences
-                    // $cordovaPreferences.store('patientTrackEmail', this.loginEmail)
-                    //     .success(function(value) {
-                    //         console.log("Success storing email: " + value);
-                    //     })
-                    //     .error(function(error) {
-                    //         console.log("Error: " + error.details);
-                    //     })
-                    // $cordovaPreferences.store('patientTrackPwd', this.loginPwd)
-                    //     .success(function(value) {
-                    //         console.log("Success storing pwd: " + value);
-                    //     })
-                    //     .error(function(error) {
-                    //         console.log("Error: " + error.details);
-                    //     })
-                })
-                .error(function (data, status, headers, config) {
-                    $ionicLoading.hide();
-                    $scope.showLoginFail();
-                });
-        };
-
-        $scope.loginFromPreferences = function (email, pwd) {
-            console.log('Logging in from Cordova preferences');
-            $ionicLoading.show();
-            $http.get('http://patienttrackapiv2.azurewebsites.net/api/Patients/' + email + '/' + pwd)
-                .success(function (data, status, headers, config) {
-                    $ionicLoading.hide();
-                    console.log('data success');
-                    console.log(data); // for browser console
-                    $rootScope.patient = data; // for UI
-                    $window.location.href = '#/Home';
+                    $window.localStorage.setItem('ptLoginEmail', $rootScope.patient.PatientEmail);
+                    $window.localStorage.setItem('ptLoginPwd', $rootScope.patient.PatientPwd);
                 })
                 .error(function (data, status, headers, config) {
                     $ionicLoading.hide();
@@ -53,7 +20,27 @@ angular.module('starter.controllers', ['ionic'])
         };
     })
 
-    .controller('RegisterCtrl', function ($scope, $http, $ionicLoading) {
+    .controller('RegisterCtrl', function ($scope, $http, $ionicLoading, $window, $rootScope) {
+        // Check if user has stored login details
+        var email = $window.localStorage.getItem('ptLoginEmail');
+        var pwd = $window.localStorage.getItem('ptLoginPwd');
+        if (email != undefined && pwd != undefined) {
+            console.log('Logging in from localstorage');
+            $ionicLoading.show();
+            $http.get('http://patienttrackapiv2.azurewebsites.net/api/Patients/' + email + '/' + pwd)
+                .success(function (data, status, headers, config) {
+                    $ionicLoading.hide();
+                    console.log('data success');
+                    console.log(data); // for browser console
+                    $rootScope.carers = data; // for UI
+                    $window.location.href = '#/ViewPatients';
+                })
+                .error(function (data, status, headers, config) {
+                    $ionicLoading.hide();
+                    $scope.showLoginFail();
+                });
+        }
+
         $scope.registerPatient = function () {
             if (this.regUsername != null && this.regEmail != null && this.regPwd != null && this.regPostcode != null) {
                 // Generate patientcode using the patient's email - not guaranteed to be unique but fine for demonstation purposes
@@ -128,6 +115,14 @@ angular.module('starter.controllers', ['ionic'])
                     $scope.showChangeNameError();
                 });
         };
+
+        $scope.signOut = function () {
+            $ionicLoading.show();
+            $window.localStorage.removeItem("ptLoginEmail");
+            $window.localStorage.removeItem("ptLoginPwd");
+            $window.location.href = '#/tab/Login';
+            $ionicLoading.hide();
+        }
     })
 
     .controller('ChangePasswordCtrl', function ($scope, $rootScope, $http, $ionicLoading, $window) {
@@ -149,10 +144,12 @@ angular.module('starter.controllers', ['ionic'])
 
                     $http.put('http://patienttrackapiv2.azurewebsites.net/api/Patients/' + $rootScope.patient.PatientID, data)
                         .success(function (data) {
-                            $ionicLoading.hide();
                             console.log('Updated password successfully');
                             $rootScope.patient = data;
                             $window.location.href = '#/Settings';
+                            $window.localStorage.removeItem("ptLoginPwd");
+                            $window.localStorage.setItem('ptLoginPwd', $rootScope.patient.PatientPwd);
+                            $ionicLoading.hide();
                             $scope.showPwdChange();
                         })
                         .error(function () {
