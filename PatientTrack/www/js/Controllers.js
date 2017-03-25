@@ -26,13 +26,14 @@ angular.module('starter.controllers', ['ionic'])
         var pwd = $window.localStorage.getItem('ptLoginPwd');
         if (email != undefined && pwd != undefined) {
             console.log('Logging in from localstorage');
+            console.log('Email is ' + email + ", Pwd is " + pwd);
             $ionicLoading.show();
             $http.get('http://patienttrackapiv2.azurewebsites.net/api/Patients/' + email + '/' + pwd)
                 .success(function (data, status, headers, config) {
                     $ionicLoading.hide();
                     console.log('data success');
                     console.log(data); // for browser console
-                    $rootScope.carers = data; // for UI
+                    $rootScope.patient = data; // for UI
                     $window.location.href = '#/Home';
                 })
                 .error(function (data, status, headers, config) {
@@ -86,7 +87,7 @@ angular.module('starter.controllers', ['ionic'])
         };
     })
 
-    .controller('SettingsCtrl', function ($scope, $rootScope, $http, $ionicLoading) {
+    .controller('SettingsCtrl', function ($scope, $rootScope, $http, $ionicLoading, $window) {
 
         $scope.updateUsername = function () {
             $ionicLoading.show();
@@ -244,6 +245,8 @@ angular.module('starter.controllers', ['ionic'])
                                         console.log('Deleted account successfully');
                                         $rootScope.patient = null;
                                         $window.location.href = '#/Register';
+                                        $window.localStorage.removeItem("ptLoginEmail");
+                                        $window.localStorage.removeItem("ptLoginPwd");
                                         $scope.showDelete();
                                     })
                                     .error(function () {
