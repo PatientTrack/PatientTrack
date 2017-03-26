@@ -101,6 +101,18 @@ angular.module('starter', ['ionic', 'starter.controllers', 'ngCordova'])
                 controller: 'ChangePasswordCtrl'
             })
 
+            .state('privacyPolicy', {
+                url: '/PrivacyPolicy',
+                templateUrl: 'Templates/PrivacyPolicy.html',
+                controller: 'PrivacyPolicyCtrl'
+            })
+
+            .state('help', {
+                url: '/Help',
+                templateUrl: 'Templates/Help.html',
+                controller: 'HelpCtrl'
+            })
+
             .state('home', {
                 url: '/Home',
                 templateUrl: 'Templates/Home.html',

@@ -2,8 +2,7 @@
     <div class="bar bar-header bar-calm">
         <img src="img/Logo_square.png" height="100%">
         <h1 class="title">PatientTrack</h1>
-        <a class="button button-icon icon ion-android-close" style="transform: translateY(-5%);"
-           href="#/Home"></a>
+        <a class="button button-icon icon ion-android-close v-align" ng-click="goBack()"></a>
     </div>
     <ion-content class="has-header">
         <div class="list">
@@ -23,6 +22,8 @@
             <input type="text" placeholder="Change Username" ng-model="updatedUsername">
         </label>
         <a class="button button-block button-balanced" ng-click="updateUsername()">Save</a>
+        <a class="button button-block button-balanced" href="#/PrivacyPolicy">View Privacy Policy</a>
+        <a class="button button-block button-balanced" href="#/Help">Help</a>
         <br/>
         <div class="item item-divider">
             Danger Zone!

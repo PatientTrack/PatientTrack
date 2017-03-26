@@ -188,7 +188,19 @@ angular.module('starter.controllers', ['ionic'])
         };
     })
 
-    .controller('PopupCtrl', function ($scope, $ionicPopup, $timeout, $rootScope, $http, $window, $interval, $cordovaGeolocation, $ionicLoading) {
+    .controller('PrivacyPolicyCtrl', function () {
+
+    })
+
+    .controller('HelpCtrl', function () {
+
+    })
+
+    .controller('PopupCtrl', function ($ionicHistory, $scope, $ionicPopup, $timeout, $rootScope, $http, $window, $interval, $cordovaGeolocation, $ionicLoading) {
+
+        $scope.goBack = function() {
+            $ionicHistory.backView().go();
+        };
 
         // Function to upload patients location to db every 30000ms (30s)
         $interval(function () {
