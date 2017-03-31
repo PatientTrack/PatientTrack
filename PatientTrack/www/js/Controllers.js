@@ -1,6 +1,10 @@
 angular.module('starter.controllers', ['ionic'])
 
     .controller('LoginCtrl', function ($scope, $http, $rootScope, $window, $ionicLoading) {
+        $scope.settings = {
+            enableFriends: true
+        };
+
         $scope.getDetails = function () {
             $ionicLoading.show();
             $http.get('http://patienttrackapiv2.azurewebsites.net/api/Patients/' + this.loginEmail + '/' + this.loginPwd)
