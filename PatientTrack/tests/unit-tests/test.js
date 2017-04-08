@@ -1,5 +1,6 @@
-describe('LoginCtrl', function() {
+describe('TestCtrl', function() {
     beforeEach(module('starter.controllers'));
+    beforeEach(module('ngAnimateMock'));
 
     var $controller;
 
@@ -8,11 +9,11 @@ describe('LoginCtrl', function() {
         $controller = _$controller_;
     }));
 
-    describe('$scope.settings', function() {
-        it('is true', function() {
+    describe('$scope.myTruth', function() {
+        it('should be true', function() {
             var $scope = {};
-            var controller = $controller('LoginCtrl', { $scope: $scope });
-            expect($scope.settings).toEqual(true);
+            var controller = $controller('TestCtrl', { $scope: $scope });
+            expect($scope.myTruth).toEqual(true);
         });
     });
 });
