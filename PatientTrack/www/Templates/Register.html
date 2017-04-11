@@ -12,26 +12,28 @@
             <br/>
         </div>
         <div class="pad-top">
-            <label class="item item-input item-floating-label">
-                <span class="input-label">Username</span>
-                <input type="text" placeholder="Username" ng-model="regUsername">
-            </label>
-            <label class="item item-input item-floating-label">
-                <span class="input-label">Email Address</span>
-                <input type="email" placeholder="Email Address" ng-model="regEmail">
-            </label>
-            <label class="item item-input item-floating-label">
-                <span class="input-label">Password</span>
-                <input type="password" placeholder="Password" ng-model="regPwd">
-            </label>
-            <label class="item item-input item-floating-label">
-                <span class="input-label">Address</span>
-                <input type="text" placeholder="Address" ng-model="regPostcode">
-            </label>
+            <form name="regform">
+                <label class="item item-input item-floating-label">
+                    <span class="input-label">Username</span>
+                    <input name="Username" type="text" placeholder="Username" ng-model="regUsername" required>
+                </label>
+                <label class="item item-input item-floating-label">
+                    <span class="input-label">Email Address</span>
+                    <input name="Email" type="email" placeholder="Email Address" ng-model="regEmail" required>
+                </label>
+                <label class="item item-input item-floating-label">
+                    <span class="input-label">Password</span>
+                    <input name="Password" type="password" placeholder="Password" ng-model="regPwd" required>
+                </label>
+                <label class="item item-input item-floating-label">
+                    <span class="input-label">Address</span>
+                    <input name="Address" type="text" placeholder="Address" ng-model="regPostcode" required>
+                </label>
+            </form>
         </div>
         <div>
             <a class="button button-clear button-balanced button block" href="#/PrivacyPolicy">By registering you agree to our Privacy Policy</a>
-            <a class="button button-balanced button-block" ng-click="registerPatient()">Register</a>
+            <a class="button button-balanced button-block" ng-click="registerPatient()" ng-disabled="regform.$invalid">Register</a>
         </div>
     </ion-content>
 </ion-view>

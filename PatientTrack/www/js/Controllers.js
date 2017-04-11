@@ -47,8 +47,8 @@ angular.module('starter.controllers', ['ionic'])
         }
 
         $scope.registerPatient = function () {
-            if (this.regUsername != null && this.regEmail != null && this.regPwd != null && this.regPostcode != null) {
-                // Generate patientcode using the patient's email - not guaranteed to be unique but fine for demonstation purposes
+            if (this.regUsername != undefined && this.regEmail != undefined && this.regPwd != undefined && this.regPostcode != undefined) {
+                // Generate patientcode using the patient's email - not guaranteed to be unique but adequate for demonstation purposes
                 $ionicLoading.show();
                 var patientCode = '';
                 for (var i = 0; i <= 6; i++) {
@@ -86,7 +86,7 @@ angular.module('starter.controllers', ['ionic'])
                     });
             }
             else {
-                $scope.showRegFail();
+                $scope.showRegIncomplete();
             }
         };
     })
@@ -202,7 +202,7 @@ angular.module('starter.controllers', ['ionic'])
 
     .controller('PopupCtrl', function ($ionicHistory, $scope, $ionicPopup, $timeout, $rootScope, $http, $window, $interval, $cordovaGeolocation, $ionicLoading) {
 
-        $scope.goBack = function() {
+        $scope.goBack = function () {
             $ionicHistory.backView().go();
         };
 
@@ -221,7 +221,7 @@ angular.module('starter.controllers', ['ionic'])
                         "Longitude": position.coords.longitude
                     };
 
-                    $http.post('http://patienttrackapiv2.azurewebsites.net/api/Patients/AddLocation/' + $rootScope.patient.PatientID, locationData)
+                $http.post('http://patienttrackapiv2.azurewebsites.net/api/Patients/AddLocation/' + $rootScope.patient.PatientID, locationData)
                     .success(function () {
                         console.log('Updated location');
                     })
@@ -327,6 +327,18 @@ angular.module('starter.controllers', ['ionic'])
                 '<br>\u2022 Invalid email' +
                 '<br>\u2022 No internet connection' +
                 '<br>\u2022 Server issue'
+            });
+
+            alertPopup.then(function (res) {
+                console.log('Registration attempt failed');
+            });
+        };
+
+        // An alert dialog for registration failure
+        $scope.showRegIncomplete = function () {
+            var alertPopup = $ionicPopup.alert({
+                title: 'Registration error',
+                subTitle: 'Please complete the form before proceeding'
             });
 
             alertPopup.then(function (res) {

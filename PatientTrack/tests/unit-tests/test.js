@@ -1,6 +1,5 @@
 describe('TestCtrl', function() {
     beforeEach(module('starter.controllers'));
-    beforeEach(module('ngAnimateMock'));
 
     var $controller;
 
