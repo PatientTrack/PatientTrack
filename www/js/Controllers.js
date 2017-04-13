@@ -211,35 +211,97 @@ angular.module('starter.controllers', ['ionic'])
             $scope.uploadLocation();
         }, 30000);
         $scope.uploadLocation = function () {
-            var options = {timeout: 10000, enableHighAccuracy: true};
-            $cordovaGeolocation.getCurrentPosition(options).then(function (position) {
-                console.log("Found user at location '" + position.coords.latitude + "," + position.coords.longitude + "', pushing to DB");
-                // POST request body
-                var locationData =
-                    {
-                        "Latitude": position.coords.latitude,
-                        "Longitude": position.coords.longitude
-                    };
+            // Check location enabled
+            cordova.plugins.diagnostic.isGpsLocationEnabled(function (enabled) {
+                if (enabled) {
+                    if (navigator.connection.type != Connection.NONE) {
+                        var options = {timeout: 10000, enableHighAccuracy: true};
+                        $cordovaGeolocation.getCurrentPosition(options).then(function (position) {
+                            console.log("Found user at location '" + position.coords.latitude + "," + position.coords.longitude + "', pushing to DB");
+                            // POST request body
+                            var locationData =
+                                {
+                                    "Latitude": position.coords.latitude,
+                                    "Longitude": position.coords.longitude
+                                };
 
-                $http.post('http://patienttrackapiv2.azurewebsites.net/api/Patients/AddLocation/' + $rootScope.patient.PatientID, locationData)
-                    .success(function () {
-                        console.log('Updated location');
-                    })
-                    .error(function (error) {
-                        console.log('Error updating location');
-                        console.log("Error: " + error);
-                    });
+                            $http.post('http://patienttrackapiv2.azurewebsites.net/api/Patients/AddLocation/' + $rootScope.patient.PatientID, locationData)
+                                .success(function () {
+                                    console.log('Updated location');
+                                })
+                                .error(function (error) {
+                                    console.log('Error updating location');
+                                    console.log("Error: " + error);
+                                });
 
+                        }, function (error) {
+                            console.log("Could not get interval location");
+                            console.log(error);
+                        });
+                    }
+                    else {
+                        console.log("No internet connection, requesting enable");
+                        $scope.showInternetError();
+                    }
+                }
+                else {
+                    console.log("GPS location is " + (enabled ? "enabled" : "disabled"));
+                    $scope.showLocationError();
+                }
             }, function (error) {
-                console.log("Could not get interval location");
-                console.log(error);
+                console.error("The following error occurred: " + error);
             });
         };
 
-// A confirm dialog for deleting a patient
+        // A confirm dialog for deleting a patient
+        $scope.showInternetError = function () {
+            var confirmPopup = $ionicPopup.show({
+                title: 'No Internet Connection',
+                subTitle: 'Please connect to WiFi or enable a Data Connection.',
+                buttons: [
+                    {
+                        text: '<b>Enable WiFi</b>',
+                        type: 'button-assertive',
+                        onTap: function () {
+                            cordova.plugins.diagnostic.switchToWifiSettings();
+                        }
+                    },
+                    {
+                        text: '<b>Enable Data</b>',
+                        type: 'button-assertive',
+                        onTap: function () {
+                            cordova.plugins.diagnostic.switchToMobileDataSettings();
+                        }
+                    }
+                ]
+            });
+        };
+
+        // A confirm dialog for deleting a patient
+        $scope.showLocationError = function () {
+            var confirmPopup = $ionicPopup.show({
+                title: 'Location is Disabled',
+                subTitle: 'Please enable your location using the button below.',
+                buttons: [
+                    {
+                        text: '<b>Enable Location</b>',
+                        type: 'button-assertive',
+                        onTap: function () {
+                            cordova.plugins.diagnostic.switchToLocationSettings();
+                        }
+                    }
+                ]
+            });
+
+            $timeout(function () {
+                confirmPopup.close(); //close the popup after 10 seconds to avoid accidents
+            }, 10000);
+        };
+
+// A confirm dialog for deleting account
         $scope.showConfirmDeleteAccount = function () {
             var confirmPopup = $ionicPopup.show({
-                template: '<input type="password" ng-model="userPwd">',
+                template: '<input type="password" placeholder="password" ng-model="userPwd">',
                 title: 'Delete Account',
                 subTitle: 'Enter your password to confirm',
                 scope: $scope,
@@ -253,23 +315,28 @@ angular.module('starter.controllers', ['ionic'])
                         type: 'button-assertive',
                         onTap: function () {
                             // delete patient
-                            if (this.scope.userPwd == $rootScope.patient.PatientPwd) {
-                                $ionicLoading.show();
-                                $http.delete('http://patienttrackapiv2.azurewebsites.net/api/Patients/' + $rootScope.patient.PatientID)
-                                    .success(function () {
-                                        $ionicLoading.hide();
-                                        console.log('Deleted account successfully');
-                                        $rootScope.patient = null;
-                                        $window.location.href = '#/Register';
-                                        $window.localStorage.removeItem("ptLoginEmail");
-                                        $window.localStorage.removeItem("ptLoginPwd");
-                                        $scope.showDelete();
-                                    })
-                                    .error(function () {
-                                        $ionicLoading.hide();
-                                        console.log('Error deleting account.');
-                                        $scope.showDeleteError();
-                                    });
+                            if (this.scope.userPwd === $rootScope.patient.PatientPwd) {
+                                if ($rootScope.patient.Carers.length === 0) {
+                                    $ionicLoading.show();
+                                    $http.delete('http://patienttrackapiv2.azurewebsites.net/api/Patients/' + $rootScope.patient.PatientID)
+                                        .success(function () {
+                                            $ionicLoading.hide();
+                                            console.log('Deleted account successfully');
+                                            $rootScope.patient = null;
+                                            $window.location.href = '#/Register';
+                                            $window.localStorage.removeItem("ptLoginEmail");
+                                            $window.localStorage.removeItem("ptLoginPwd");
+                                            $scope.showDelete();
+                                        })
+                                        .error(function () {
+                                            $ionicLoading.hide();
+                                            console.log('Error deleting account.');
+                                            $scope.showDeleteError();
+                                        });
+                                }
+                                else {
+                                    $scope.showDeleteErrHasCarers();
+                                }
                             }
                             else {
                                 $scope.showDeletePwdError();
@@ -346,7 +413,7 @@ angular.module('starter.controllers', ['ionic'])
             });
         };
 
-// An alert dialog for registration success
+        // An alert dialog for registration success
         $scope.showRegSuccess = function () {
             var alertPopup = $ionicPopup.alert({
                 title: 'Registration success!',
@@ -354,53 +421,64 @@ angular.module('starter.controllers', ['ionic'])
             });
         };
 
-// An alert dialog for mismatching new password entries
+        // An alert dialog for mismatching new password entries
         $scope.showPwdMismatch = function () {
             var alertPopup = $ionicPopup.alert({
                 title: 'New password entries do not match',
-                subtitle: 'Password not changed'
+                subTitle: 'Password not changed'
             });
         };
 
-// An alert dialog for password change success
+        // An alert dialog for password change success
         $scope.showPwdChange = function () {
             var alertPopup = $ionicPopup.alert({
                 title: 'Password changed'
             });
         };
 
-// An alert dialog for misc password change error
+        // An alert dialog for misc password change error
         $scope.showPwdError = function () {
             var alertPopup = $ionicPopup.alert({
                 title: 'Could not change password',
-                subtitle: 'You did everything right, something went wrong on our end.'
+                subTitle: 'You did everything right, something went wrong on our end.'
             });
         };
 
-// An alert dialog for incorrect 'current password'
+        // An alert dialog for incorrect 'current password'
         $scope.showOldPwdError = function () {
             var alertPopup = $ionicPopup.alert({
                 title: 'Current password incorrect'
             });
         };
 
-// An alert dialog for incorrect password on delete account
+        // An alert dialog for incorrect password on delete account
         $scope.showDeletePwdError = function () {
             var alertPopup = $ionicPopup.alert({
                 title: 'Password incorrect',
-                subtitle: 'Account not deleted'
+                subTitle: 'Account not deleted'
             });
         };
 
-// An alert dialog for misc delete account error
+        // An alert dialog for misc delete account error
         $scope.showDeleteError = function () {
             var alertPopup = $ionicPopup.alert({
                 title: 'Account could not be deleted',
-                subtitle: 'You did everything right, something went wrong on our end.'
+                subTitle: 'You did everything right!<br/>Looks like we\'re having some problems on our end.'
             });
         };
 
-// An alert dialog for delete account success
+        // An alert dialog for delete account error if the patient has carers
+        $scope.showDeleteErrHasCarers = function () {
+            var alertPopup = $ionicPopup.alert({
+                title: 'Account could not be deleted',
+                subTitle: 'You may not delete your account whilst you are connected with one or more carers. <br/>'
+                + 'Please contact them if you wish to delete your account.',
+                templateUrl: 'popup-template.html',
+                scope: $scope
+            });
+        };
+
+        // An alert dialog for delete account success
         $scope.showDelete = function () {
             var alertPopup = $ionicPopup.alert({
                 title: 'Account deleted'
