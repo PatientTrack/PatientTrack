@@ -1,9 +1,5 @@
 angular.module('starter.controllers', ['ionic'])
 
-    .controller('TestCtrl', function ($scope) {
-        $scope.myTruth = true;
-    })
-
     .controller('LoginCtrl', function ($scope, $http, $rootScope, $window, $ionicLoading) {
         $scope.getDetails = function () {
             $ionicLoading.show();
@@ -30,7 +26,6 @@ angular.module('starter.controllers', ['ionic'])
         var pwd = $window.localStorage.getItem('ptLoginPwd');
         if (email != undefined && pwd != undefined) {
             console.log('Logging in from localstorage');
-            console.log('Email is ' + email + ", Pwd is " + pwd);
             $ionicLoading.show();
             $http.get('http://patienttrackapiv2.azurewebsites.net/api/Patients/' + email + '/' + pwd)
                 .success(function (data, status, headers, config) {
@@ -217,7 +212,8 @@ angular.module('starter.controllers', ['ionic'])
                     if (navigator.connection.type != Connection.NONE) {
                         var options = {timeout: 10000, enableHighAccuracy: true};
                         $cordovaGeolocation.getCurrentPosition(options).then(function (position) {
-                            console.log("Found user at location '" + position.coords.latitude + "," + position.coords.longitude + "', pushing to DB");
+                            console.log("Found user at location '" + position.coords.latitude + ","
+                                + position.coords.longitude + "', pushing to DB");
                             // POST request body
                             var locationData =
                                 {
@@ -225,7 +221,8 @@ angular.module('starter.controllers', ['ionic'])
                                     "Longitude": position.coords.longitude
                                 };
 
-                            $http.post('http://patienttrackapiv2.azurewebsites.net/api/Patients/AddLocation/' + $rootScope.patient.PatientID, locationData)
+                            $http.post('http://patienttrackapiv2.azurewebsites.net/api/Patients/AddLocation/'
+                                + $rootScope.patient.PatientID, locationData)
                                 .success(function () {
                                     console.log('Updated location');
                                 })
